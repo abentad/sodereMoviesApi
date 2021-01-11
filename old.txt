@@ -4,15 +4,16 @@ const express = require("express");
 const app = express();
 
 app.get("/", async (req, res) => {
+
+  res.json({});
+});
+
+const moviesArray = [];
+
+const getMovies = async () => {
   const url = "https://www.sodere.com/movies";
   const response = await fetch(url);
   const body = await response.text();
-  const movies = getMovies(body);
-  res.json(movies);
-});
-
-function getMovies(body) {
-  const moviesArray = [];
   const $ = cheerio.load(body);
   $(".item-type-movie").each((i, item) => {
     const $item = $(item);
@@ -26,8 +27,9 @@ function getMovies(body) {
     moviesArray.push(movie);
   });
   console.log(moviesArray);
-  return moviesArray;
-}
+};
+
+getMovies();
 
 //
 const port = process.env.port || 3000;
