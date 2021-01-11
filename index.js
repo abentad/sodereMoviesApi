@@ -1,6 +1,7 @@
-const fetch = require("node-fetch");
-const cheerio = require("cheerio");
-const express = require("express");
+import fetch from "node-fetch";
+import express from "express";
+import { getMovies } from "./movies.js";
+
 const app = express();
 
 app.get("/", async (req, res) => {
@@ -10,24 +11,6 @@ app.get("/", async (req, res) => {
   const movies = getMovies(body);
   res.json(movies);
 });
-
-function getMovies(body) {
-  const moviesArray = [];
-  const $ = cheerio.load(body);
-  $(".item-type-movie").each((i, item) => {
-    const $item = $(item);
-    const name = $item.find("a strong").text().trim();
-    const image = $item.find(".browse-image-container img").attr("src").trim();
-
-    const movie = {
-      name,
-      image,
-    };
-    moviesArray.push(movie);
-  });
-  console.log(moviesArray);
-  return moviesArray;
-}
 
 //
 const port = process.env.port || 3000;
