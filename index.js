@@ -1,0 +1,36 @@
+const fetch = require("node-fetch");
+const cheerio = require("cheerio");
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+  res.json(moviesArray);
+});
+
+const port = process.env.port || 3000;
+app.listen(port, () => {
+  console.log(`server started at\n http://localhost:${port}`);
+});
+
+const moviesArray = [];
+
+const getMovies = async () => {
+  const url = "https://www.sodere.com/movies";
+  const response = await fetch(url);
+  const body = await response.text();
+  const $ = cheerio.load(body);
+  $(".item-type-movie").each((i, item) => {
+    const $item = $(item);
+    const name = $item.find("a strong").text().trim();
+    const image = $item.find(".browse-image-container img").attr("src").trim();
+
+    const movie = {
+      name,
+      image,
+    };
+    moviesArray.push(movie);
+  });
+  console.log(moviesArray);
+};
+
+getMovies();
